@@ -425,8 +425,10 @@
     function renderCard(card, clPrice, ebayListings) {
       const clValue = clPrice?.price ? parseFloat(clPrice.price) : null;
       
-      // Build CardLadder URL (if we have spec_id)
-      const clUrl = card.spec_id ? `https://www.cardladder.com/card/${card.spec_id}` : null;
+      // CardLadder Sales Link API - direct link using grader and cert
+      const clUrl = card.grader && card.cert 
+        ? `https://app.cardladder.com/search?grader=${card.grader.toLowerCase()}&cert=${card.cert}`
+        : null;
       
       document.getElementById('app').innerHTML = `
         <!-- Header -->
@@ -477,6 +479,7 @@
         <!-- Pricing Section -->
         <div class="section">
           <div class="section-title">Pricing</div>
+          ${clPrice ? `
           <div class="price-main">
             <div class="value">${formatCurrency(clValue)}</div>
             <div class="label">CardLadder Estimate</div>
@@ -496,9 +499,10 @@
           ${clUrl ? `
             <div class="link-row">
               <span></span>
-              <a href="${clUrl}" target="_blank">View on CardLadder →</a>
+              <a href="${clUrl}" target="_blank">View Sales History →</a>
             </div>
           ` : ''}
+          ` : '<div class="no-listings">No pricing data available</div>'}
         </div>
 
         <!-- eBay Listings Section -->
